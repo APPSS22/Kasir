@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kayana Proyek</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.99.3/dist/umd/supabase.js"></script>
+<script>
+/* Koneksi Supabase (publishable key aman di web). JANGAN pernah taruh sb_secret_ di sini! */
+window.APP_CONFIG = {
+  url: 'https://mxjzsbksxyiwyowbernp.supabase.co',
+  key: 'sb_publishable_gIXb-7LcIc9mLYpwMHPp6g_MY-yJ0Fn'
+};
+</script>
+<style>
+:root{--indigo:#4f46e5;--indigo-d:#4338ca;--indigo-l:#eef2ff;--green:#059669;--green-d:#047857;--blue:#0284c7;--amber:#f59e0b;--red:#e11d48;--ink:#1e1b4b;--text:#334155;--muted:#64748b;--line:#e2e8f0;--bg:#f8fafc;--r:14px}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+.top{background:linear-gradient(90deg,var(--indigo-d),var(--indigo) 60%,#5b4ff0);color:#fff;box-shadow:0 2px 10px rgba(67,56,202,.25)}
+.top .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;padding-bottom:8px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:46px;height:46px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center;flex:none}
+.brand h1{margin:0;font-size:21px;font-weight:800;letter-spacing:-.3px}
+.brand p{margin:2px 0 0;font-size:12px;opacity:.85}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.statusbar{width:100%;display:flex;justify-content:flex-end;font-size:11.5px}
+.conn{display:inline-flex;align-items:center;gap:6px}
+.conn i{width:8px;height:8px;border-radius:50%;background:#fbbf24;display:inline-block}
+.conn.on i{background:#34d399;box-shadow:0 0 0 3px rgba(52,211,153,.3)}.conn.off i{background:#f87171}
+.btn{border:0;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn svg{width:15px;height:15px;flex:none}
+.b-ghost{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35)}
+.b-green{background:var(--green);color:#fff}.b-blue{background:var(--blue);color:#fff}.b-dgreen{background:var(--green-d);color:#fff}
+.b-amber{background:var(--amber);color:#fff}.b-indigo{background:var(--indigo);color:#fff}.b-red{background:var(--red);color:#fff}
+.b-light{background:#f1f5f9;color:var(--text);border:1px solid var(--line)}
+.b-sm{padding:6px 10px;font-size:12.5px}.b-lg{padding:11px 18px;font-size:15px}
+main.wrap{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px;padding-top:20px;padding-bottom:24px;align-items:start}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:0 1px 3px rgba(15,23,42,.05);min-width:0}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:20px 20px 16px;border-bottom:1px solid #f1f5f9;flex-wrap:wrap}
+.card-head h2{margin:6px 0 0;font-size:18px;color:var(--ink);font-weight:700}
+.card-head small{color:var(--muted);font-size:12px}
+.card-body{padding:18px 20px 20px;background:#fbfcfe;border-radius:0 0 var(--r) var(--r)}
+.badge{display:inline-block;background:var(--indigo-l);color:var(--indigo-d);font-size:11px;font-weight:700;letter-spacing:.6px;padding:4px 9px;border-radius:5px}
+.projbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.projbar select{font-weight:700;color:var(--ink);font-size:16px;max-width:100%;min-width:200px}
+.mgn{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
+.mgn label{font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap}
+.mgn input[type=range]{width:130px;accent-color:var(--indigo)}
+.mgn .inp{width:70px;padding:6px 8px;text-align:center;font-weight:700;color:var(--indigo-d)}
+.panel{border:1px solid var(--line);border-radius:10px;background:#fff;padding:14px}
+label.lb{display:block;font-size:12.5px;margin-bottom:6px;font-weight:500}
+.inp{width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:9px 12px;background:#fff;outline:none}
+.inp:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(79,70,229,.15)}
+.picker{display:grid;grid-template-columns:1fr 90px auto;gap:12px;align-items:end}
+.tbl-wrap{border:1px solid var(--line);border-radius:10px;overflow:auto;background:#fff;margin-top:16px}
+table{width:100%;border-collapse:collapse}
+th{background:#f1f5f9;text-align:left;font-size:11.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#475569;padding:11px 12px;position:sticky;top:0;z-index:1;white-space:nowrap}
+td{padding:10px 12px;border-top:1px solid #f1f5f9;vertical-align:middle}
+.r{text-align:right}.c{text-align:center}
+.empty td{text-align:center;color:var(--muted);padding:28px 12px;font-size:13px}
+.code{font-size:10.5px;color:var(--muted);font-family:ui-monospace,monospace;display:block}
+.pname{font-weight:500;color:#0f172a}
+.sub{display:block;font-size:11px;color:var(--muted)}
+.linkish{background:none;border:0;padding:0;color:var(--indigo);text-decoration:underline;cursor:pointer;font-size:11px}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.qty button{border:0;background:#f8fafc;width:28px;height:30px;cursor:pointer;font-weight:700}
+.qty input{width:56px;border:0;text-align:center;height:30px;outline:none;-moz-appearance:textfield}
+.qty input::-webkit-outer-spin-button,.qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.ico{border:0;background:none;cursor:pointer;padding:5px;border-radius:6px;display:inline-grid;place-items:center}
+.ico:hover{background:#f1f5f9}.ico svg{width:16px;height:16px}.ico.edit{color:var(--indigo)}.ico.del{color:var(--red)}
+.summary{margin-top:16px;border:1px solid #dbe3ff;background:#f5f7ff;border-radius:10px;padding:16px}
+.srow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0}
+.srow b{color:#0f172a}
+.total{border-top:1px solid #c7d2fe;margin-top:8px;padding-top:12px}
+.total span{font-size:17px;font-weight:700;color:var(--ink)}.total b{font-size:22px;color:var(--indigo-d);font-weight:800}
+.master .tbl-wrap{max-height:600px}
+.master tbody tr{cursor:pointer}.master tbody tr:hover td{background:#fafaff}
+footer{border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:12px;padding:14px 16px 18px}
+.gate{position:fixed;inset:0;width:100%;min-height:100vh;min-height:100dvh;z-index:50;background:linear-gradient(135deg,var(--indigo-d),#6d5ff5);display:grid;place-items:center;padding:16px}
+.gate[hidden]{display:none}
+body.gated{overflow:hidden}body.gated>header,body.gated>main,body.gated>footer{display:none!important}
+.gate .box{background:#fff;border-radius:16px;width:min(400px,100%);padding:28px 24px;box-shadow:0 25px 50px rgba(15,23,42,.3)}
+.gate h2{margin:0 0 6px;color:var(--ink);font-size:20px}.gate p{margin:0 0 16px;color:var(--muted);font-size:13px;line-height:1.5}
+dialog{border:0;border-radius:14px;padding:0;width:min(440px,calc(100vw - 32px));box-shadow:0 25px 50px rgba(15,23,42,.25)}
+dialog::backdrop{background:rgba(15,23,42,.45)}
+.dh{padding:16px 20px;border-bottom:1px solid var(--line)}.dh h3{margin:0;font-size:16px;color:var(--ink)}
+.db{padding:18px 20px;display:grid;gap:12px}.df{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}
+.hint{font-size:11.5px;color:var(--muted);margin-top:4px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#0f172a;color:#fff;padding:10px 16px;border-radius:9px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:100;max-width:calc(100vw - 32px)}
+.toast.show{opacity:1;transform:translateX(-50%)}.toast.err{background:var(--red)}
+@media (max-width:960px){main.wrap{grid-template-columns:1fr}.master .tbl-wrap{max-height:420px}}
+@media (max-width:560px){
+  .brand h1{font-size:17px}.actions .btn{padding:7px 10px;font-size:12.5px}
+  .picker{grid-template-columns:1fr 80px}.picker .add{grid-column:1/-1;justify-content:center}
+  .card-head,.card-body{padding-left:14px;padding-right:14px}.hide-sm{display:none}td,th{padding:9px 8px}
+  .mgn input[type=range]{width:90px}.projbar select{min-width:0;flex:1}
+}
+</style>
+</head>
+<body class="gated">
+
+<div class="gate" id="gate">
+  <div class="box"><h2 id="gTitle">Memuat…</h2><p id="gMsg">Menghubungkan ke server.</p>
+    <button class="btn b-indigo b-lg" id="btnRetry" hidden style="width:100%;justify-content:center">Coba Lagi</button></div>
+</div>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></div>
+      <div><h1>KAYANA APPS - Master Produk &amp; Proyek</h1><p>Database Produk, Estimasi Penawaran &amp; Manajemen Multi-Proyek</p></div>
+    </div>
+    <div class="actions">
+      <button class="btn b-ghost" id="btnExpProj"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15l3 3 3-3M12 11v7"/></svg>Ekspor Proyek Ini</button>
+      <button class="btn b-green" id="btnCsv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>Ekspor CSV</button>
+      <button class="btn b-blue" id="btnNewProj">+ Proyek Baru</button>
+      <button class="btn b-dgreen" id="btnBackup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Backup Semua</button>
+      <button class="btn b-amber" id="btnImport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Import</button>
+      <input type="file" id="fileImport" accept=".json,.csv,text/csv,application/json" hidden>
+    </div>
+    <div class="statusbar"><span class="conn" id="conn"><i></i><span id="connTxt">Menghubungkan…</span></span></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card">
+    <div class="card-head">
+      <div style="min-width:0;flex:1">
+        <span class="badge">MODUL PROYEK</span>
+        <div class="projbar">
+          <select class="inp" id="projSel" aria-label="Pilih proyek"></select>
+          <button class="ico edit" id="btnRename" title="Ganti nama proyek"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zm17.7-10.2a1 1 0 0 0 0-1.42l-2.33-2.33a1 1 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>
+          <button class="ico del" id="btnDelProj" title="Hapus proyek"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+      </div>
+      <div class="mgn"><label for="mgRange">Set Margin:</label><input type="range" id="mgRange" min="0" max="100" step="1" value="20"><input class="inp" id="mgVal" type="number" min="0" max="1000" step="1" value="20"><span>%</span></div>
+    </div>
+    <div class="card-body">
+      <div class="panel">
+        <div class="picker">
+          <div><label class="lb" for="pickSel">Pilih Produk dari Master</label><select class="inp" id="pickSel"></select></div>
+          <div><label class="lb" for="qtyIn">Jumlah (Qty)</label><input class="inp" id="qtyIn" type="number" min="1" value="1"></div>
+          <button class="btn b-indigo b-lg add" id="btnAdd">+ Tambah</button>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Produk</th><th class="r hide-sm">Harga Satuan</th><th class="c">Qty</th><th class="r">Subtotal HPP</th><th class="c">Aksi</th></tr></thead>
+          <tbody id="itemBody"></tbody>
+        </table>
+      </div>
+      <div class="summary">
+        <div class="srow"><span>Total Subtotal HPP (Modal Dasar):</span><b id="sSub">Rp 0</b></div>
+        <div class="srow"><span>Margin (<span id="sMgPct">0</span>%):</span><b id="sMg" style="color:var(--green-d)">Rp 0</b></div>
+        <div class="srow total"><span>Total Estimasi Anggaran Penawaran:</span><b id="sTotal">Rp 0</b></div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="card master">
+    <div class="card-head" style="align-items:center">
+      <div><h2 style="margin:0">Master Database Produk</h2><small>Kelola master harga satuan barang · klik baris untuk tambah ke proyek</small></div>
+      <button class="btn b-green" id="btnNewProd">+ Produk Baru</button>
+    </div>
+    <div class="card-body">
+      <input class="inp" id="pSearch" placeholder="🔍  Cari nama atau SKU produk…">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Kode / Produk</th><th class="r">Harga Satuan</th><th class="c">Aksi</th></tr></thead>
+          <tbody id="prodBody"></tbody>
+        </table>
+      </div>
+      <div class="hint" id="prodCount"></div>
+    </div>
+  </aside>
+</main>
+
+<footer>KAYANA APPS © 2026 - Rekapan Data Base Produk &amp; Multi-Proyek</footer>
+
+<dialog id="dProd">
+  <form method="dialog" id="fProd">
+    <div class="dh"><h3 id="dProdTitle">Produk Baru</h3></div>
+    <div class="db">
+      <div><label class="lb" for="fKode">Kode / SKU</label><input class="inp" id="fKode" required maxlength="40"></div>
+      <div><label class="lb" for="fNama">Nama Produk</label><input class="inp" id="fNama" required maxlength="150"></div>
+      <div><label class="lb" for="fHpp">Harga Satuan / HPP (Rp)</label><input class="inp" id="fHpp" type="number" min="0" step="1" required></div>
+    </div>
+    <div class="df"><button class="btn b-light" value="cancel" formnovalidate>Batal</button><button class="btn b-indigo" value="ok" id="fSave">Simpan</button></div>
+  </form>
+</dialog>
+
+<dialog id="dName">
+  <form method="dialog" id="fName">
+    <div class="dh"><h3 id="dNameTitle">Proyek Baru</h3></div>
+    <div class="db"><div><label class="lb" for="nmInput">Nama Proyek</label><input class="inp" id="nmInput" maxlength="120" required placeholder="contoh: Pengadaan Apotek Seminyak"></div></div>
+    <div class="df"><button class="btn b-light" value="cancel" formnovalidate>Batal</button><button class="btn b-indigo" value="ok">Simpan</button></div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+var CUR_KEY='kayanaProyek_cur';
+var SB=null, products=[], pmap={}, projects=[], items=[], curId=null, ui={nameMode:null,editId:null,online:false,everOnline:false};
+
+/* ---------- utils ---------- */
+function rp(n){ n=Math.round(Number(n)||0); return (n<0?'-':'')+'Rp '+Math.abs(n).toLocaleString('id-ID'); }
+function num(v){ var n=parseFloat(v); return isFinite(n)?n:0; }
+function money(v){ return Math.round(num(String(v==null?'':v).replace(/[^\d,.-]/g,'').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'))); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function pad(n,l){ return String(n).padStart(l||2,'0'); }
+function isoDate(d){ d=d||new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function toast(m,err){ var t=$('toast'); t.textContent=m; t.className='toast show'+(err?' err':''); clearTimeout(t._t); t._t=setTimeout(function(){t.className='toast';},err?5000:2600); }
+function lget(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lset(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+var deb={}; function debounce(k,fn,ms){ clearTimeout(deb[k]); deb[k]=setTimeout(fn,ms||300); }
+function errMsg(e){
+  var m=(e&&(e.message||e.error_description))||String(e);
+  if(/Failed to fetch|NetworkError|Load failed/i.test(m)) return 'Koneksi internet terputus / server tidak bisa dihubungi.';
+  if(/expected pattern|Unexpected token|JSON/i.test(m)||/^\s*</.test(m)) return 'Alamat server salah (balasan bukan data Supabase).';
+  if(e&&e.code==='23505') return 'Kode / SKU sudah dipakai produk lain.';
+  if(/relation|does not exist|schema cache|Could not find/i.test(m)) return 'Database belum disiapkan. Jalankan setup-proyek.sql di Supabase → SQL Editor.';
+  return m;
+}
+function slug(s){ return String(s||'proyek').replace(/[^\w\- ]+/g,'').trim().replace(/\s+/g,'_').slice(0,60)||'proyek'; }
+function download(name,content,type){
+  var blob=new Blob([content],{type:type}); var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href); a.remove();},500);
+}
+async function fetchAll(build){
+  var out=[],from=0,size=1000;
+  for(;;){ var r=await build().range(from,from+size-1); if(r.error) throw r.error; out=out.concat(r.data); if(r.data.length<size) break; from+=size; }
+  return out;
+}
+function cur(){ for(var i=0;i<projects.length;i++) if(projects[i].id===curId) return projects[i]; return null; }
+
+/* ---------- gate ---------- */
+function gate(title,msg){ $('gate').hidden=false; document.body.classList.add('gated'); $('gTitle').textContent=title; $('gMsg').textContent=msg; $('btnRetry').hidden=title==='Memuat…'; }
+$('btnRetry').onclick=function(){ location.reload(); };
+
+/* ---------- data ---------- */
+async function loadProducts(){
+  products=await fetchAll(function(){ return SB.from('pr_products').select('id,kode,nama,hpp').order('kode'); });
+  pmap={}; products.forEach(function(p){ pmap[p.id]=p; });
+  renderProducts(); renderPicker(); renderItems();
+}
+async function loadProjects(){
+  projects=await fetchAll(function(){ return SB.from('pr_projects').select('id,nama,margin,updated_at').order('created_at'); });
+  if(!projects.length){
+    var r=await SB.from('pr_projects').insert({nama:'Proyek Baru',margin:20}).select('id,nama,margin,updated_at');
+    if(r.error) throw r.error; projects=r.data;
+  }
+  if(!cur()){ var saved=lget(CUR_KEY); curId=projects.some(function(p){return p.id===saved;})?saved:projects[projects.length-1].id; }
+  renderProjects();
+}
+async function loadItems(){
+  if(!curId){ items=[]; renderItems(); return; }
+  var id=curId;
+  var data=await fetchAll(function(){ return SB.from('pr_items').select('id,product_id,kode,nama,hpp,qty').eq('project_id',id).order('seq'); });
+  if(id===curId){ items=data; renderItems(); }
+}
+async function refreshAll(){ try{ await Promise.all([loadProducts(),loadProjects()]); await loadItems(); }catch(e){ toast(errMsg(e),true); } }
+function subscribe(){
+  SB.channel('proyek-sync')
+    .on('postgres_changes',{event:'*',schema:'public',table:'pr_products'},function(){ debounce('p',loadProducts); })
+    .on('postgres_changes',{event:'*',schema:'public',table:'pr_projects'},function(){ debounce('j',function(){ loadProjects().then(loadItems).catch(function(){}); }); })
+    .on('postgres_changes',{event:'*',schema:'public',table:'pr_items'},function(pl){
+      var pid=(pl.new&&pl.new.project_id)||(pl.old&&pl.old.project_id);
+      if(!pid||pid===curId) debounce('i',loadItems,200);
+    })
+    .subscribe(function(st){
+      var was=ui.online; ui.online=st==='SUBSCRIBED';
+      $('conn').className='conn '+(ui.online?'on':'off');
+      $('connTxt').textContent=ui.online?'Online · tersimpan & sinkron otomatis':'Offline · perubahan belum tersimpan';
+      if(ui.online&&!was&&ui.everOnline) refreshAll();
+      if(ui.online) ui.everOnline=true;
+    });
+}
+window.addEventListener('online',refreshAll);
+document.addEventListener('visibilitychange',function(){ if(!document.hidden&&SB) refreshAll(); });
+
+/* ---------- render ---------- */
+function renderProjects(){
+  var sel=$('projSel');
+  sel.innerHTML=projects.map(function(p){ return '<option value="'+p.id+'"'+(p.id===curId?' selected':'')+'>'+esc(p.nama)+'</option>'; }).join('');
+  var c=cur();
+  if(c && document.activeElement!==$('mgVal') && document.activeElement!==$('mgRange')){ $('mgVal').value=c.margin; $('mgRange').value=Math.min(c.margin,100); }
+  renderTotals();
+}
+function renderPicker(){
+  var v=$('pickSel').value;
+  $('pickSel').innerHTML='<option value="">-- Pilih Barang --</option>'+products.map(function(p){
+    return '<option value="'+p.id+'">'+esc(p.kode)+' · '+esc(p.nama)+' ('+rp(p.hpp)+')</option>'; }).join('');
+  if(v&&pmap[v]) $('pickSel').value=v;
+}
+var ICON_EDIT='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zm17.7-10.2a1 1 0 0 0 0-1.42l-2.33-2.33a1 1 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>';
+var ICON_DEL='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>';
+function renderItems(){
+  $('itemBody').innerHTML=items.length?items.map(function(it){
+    var mp=it.product_id&&pmap[it.product_id], diff=mp&&mp.hpp!==it.hpp;
+    return '<tr data-id="'+it.id+'"><td><span class="code">'+esc(it.kode)+'</span><span class="pname">'+esc(it.nama)+'</span>'+
+      (diff?'<span class="sub">harga master sekarang '+rp(mp.hpp)+' · <button class="linkish" data-a="sync">pakai harga master</button></span>':'')+'</td>'+
+      '<td class="r hide-sm">'+rp(it.hpp)+'</td>'+
+      '<td class="c"><span class="qty"><button data-a="dec">−</button><input data-a="set" type="number" min="1" value="'+it.qty+'" aria-label="Qty"><button data-a="inc">+</button></span></td>'+
+      '<td class="r"><b>'+rp(it.hpp*it.qty)+'</b></td>'+
+      '<td class="c"><button class="ico del" data-a="rm" title="Hapus dari proyek">'+ICON_DEL+'</button></td></tr>';
+  }).join(''):'<tr class="empty"><td colspan="5">Belum ada kebutuhan produk di proyek ini.</td></tr>';
+  renderTotals();
+}
+function calc(){
+  var c=cur(), m=c?Number(c.margin)||0:0, sub=0;
+  items.forEach(function(it){ sub+=it.hpp*it.qty; });
+  var mg=Math.round(sub*m/100);
+  return {m:m,sub:sub,mg:mg,total:sub+mg};
+}
+function renderTotals(){
+  var t=calc(); $('sSub').textContent=rp(t.sub); $('sMgPct').textContent=t.m; $('sMg').textContent=rp(t.mg); $('sTotal').textContent=rp(t.total);
+}
+function renderProducts(){
+  var q=$('pSearch').value.trim().toLowerCase();
+  var list=products.filter(function(p){ return !q||p.nama.toLowerCase().indexOf(q)>-1||p.kode.toLowerCase().indexOf(q)>-1; })
+    .sort(function(a,b){ return a.kode.localeCompare(b.kode,'id',{numeric:true}); });
+  $('prodBody').innerHTML=list.length?list.map(function(p){
+    return '<tr data-id="'+p.id+'"><td><span class="code">'+esc(p.kode)+'</span><span class="pname">'+esc(p.nama)+'</span></td>'+
+      '<td class="r"><b>'+rp(p.hpp)+'</b></td><td class="c" style="white-space:nowrap"><button class="ico edit" data-a="edit" title="Edit">'+ICON_EDIT+'</button><button class="ico del" data-a="del" title="Hapus">'+ICON_DEL+'</button></td></tr>';
+  }).join(''):'<tr class="empty"><td colspan="3">'+(products.length?'Tidak ada produk yang cocok.':'Belum ada produk. Klik “+ Produk Baru” atau Import.')+'</td></tr>';
+  $('prodCount').textContent=products.length+' produk terdaftar';
+}
+
+/* ---------- project actions ---------- */
+function switchProject(id){ curId=id; lset(CUR_KEY,id); items=[]; renderProjects(); renderItems(); loadItems().catch(function(e){toast(errMsg(e),true);}); }
+$('projSel').onchange=function(){ switchProject(this.value); };
+function openName(mode){
+  ui.nameMode=mode; $('dNameTitle').textContent=mode==='new'?'Proyek Baru':'Ganti Nama Proyek';
+  $('nmInput').value=mode==='new'?'':(cur()?cur().nama:''); $('dName').showModal(); setTimeout(function(){$('nmInput').focus();},50);
+}
+$('btnNewProj').onclick=function(){ openName('new'); };
+$('btnRename').onclick=function(){ openName('rename'); };
+$('fName').addEventListener('submit',async function(e){
+  if(!e.submitter||e.submitter.value!=='ok') return;
+  var n=$('nmInput').value.trim(); if(!n){ e.preventDefault(); return; }
+  if(ui.nameMode==='new'){
+    var c=cur(), r=await SB.from('pr_projects').insert({nama:n,margin:c?c.margin:20}).select('id,nama,margin,updated_at');
+    if(r.error){ toast(errMsg(r.error),true); return; }
+    projects.push(r.data[0]); switchProject(r.data[0].id); toast('Proyek "'+n+'" dibuat');
+  } else {
+    var r2=await SB.from('pr_projects').update({nama:n}).eq('id',curId);
+    if(r2.error){ toast(errMsg(r2.error),true); return; }
+    cur().nama=n; renderProjects(); toast('Nama proyek diperbarui');
+  }
+});
+$('btnDelProj').onclick=async function(){
+  var c=cur(); if(!c) return;
+  if(!confirm('Hapus proyek "'+c.nama+'" beserta '+items.length+' itemnya?\nBerlaku di semua perangkat dan TIDAK bisa dibatalkan.')) return;
+  var r=await SB.from('pr_projects').delete().eq('id',c.id);
+  if(r.error){ toast(errMsg(r.error),true); return; }
+  projects=projects.filter(function(p){return p.id!==c.id;}); curId=null;
+  await loadProjects(); switchProject(curId); toast('Proyek dihapus');
+};
+function setMargin(v,fromRange){
+  var c=cur(); if(!c) return;
+  v=Math.max(0,Math.min(1000,Math.round(num(v))));
+  if(fromRange) $('mgVal').value=v; else $('mgRange').value=Math.min(v,100);
+  c.margin=v; renderTotals();
+  var id=c.id;
+  debounce('mg',async function(){ var r=await SB.from('pr_projects').update({margin:v}).eq('id',id); if(r.error) toast(errMsg(r.error),true); },500);
+}
+$('mgRange').addEventListener('input',function(){ setMargin(this.value,true); });
+$('mgVal').addEventListener('change',function(){ setMargin(this.value,false); });
+
+/* ---------- items ---------- */
+async function addItem(pid,qty){
+  if(!curId) return;
+  var r=await SB.rpc('pr_add_item',{p_project:curId,p_product:pid,p_qty:qty});
+  if(r.error){ toast(errMsg(r.error),true); return; }
+  toast('+ '+qty+' × '+(pmap[pid]?pmap[pid].nama:'produk')); loadItems();
+}
+$('btnAdd').onclick=function(){
+  var pid=$('pickSel').value; if(!pid){ toast('Pilih barang dulu'); return; }
+  var q=Math.max(1,Math.floor(num($('qtyIn').value))||1); addItem(pid,q); $('qtyIn').value=1;
+};
+$('qtyIn').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); $('btnAdd').click(); } });
+async function setQty(it,q){
+  q=Math.floor(num(q));
+  if(q<=0) return removeItem(it);
+  it.qty=q; renderItems();
+  var r=await SB.from('pr_items').update({qty:q}).eq('id',it.id); if(r.error){ toast(errMsg(r.error),true); loadItems(); }
+}
+async function removeItem(it){
+  items=items.filter(function(x){return x!==it;}); renderItems();
+  var r=await SB.from('pr_items').delete().eq('id',it.id); if(r.error){ toast(errMsg(r.error),true); loadItems(); }
+}
+$('itemBody').addEventListener('click',async function(e){
+  var b=e.target.closest('button[data-a]'); if(!b) return;
+  var it=items.find(function(x){return x.id===b.closest('tr').dataset.id;}); if(!it) return;
+  if(b.dataset.a==='inc') setQty(it,it.qty+1);
+  else if(b.dataset.a==='dec') setQty(it,it.qty-1);
+  else if(b.dataset.a==='rm') removeItem(it);
+  else if(b.dataset.a==='sync'){ var mp=pmap[it.product_id]; if(!mp) return;
+    var r=await SB.from('pr_items').update({hpp:mp.hpp,nama:mp.nama,kode:mp.kode}).eq('id',it.id);
+    if(r.error) toast(errMsg(r.error),true); else { toast('Harga diperbarui ke harga master'); loadItems(); } }
+});
+$('itemBody').addEventListener('change',function(e){
+  if(e.target.dataset.a!=='set') return;
+  var it=items.find(function(x){return x.id===e.target.closest('tr').dataset.id;}); if(it) setQty(it,e.target.value);
+});
+
+/* ---------- products ---------- */
+function nextKode(){
+  var max=0,pre='PRD-',w=3;
+  products.forEach(function(p){ var m=p.kode.match(/^(.*?)(\d+)$/); if(m){ var n=parseInt(m[2],10); if(n>=max){ max=n; pre=m[1]; w=m[2].length; } } });
+  return pre+pad(max+1,w);
+}
+function openProd(p){
+  ui.editId=p?p.id:null; $('dProdTitle').textContent=p?'Edit Produk':'Produk Baru';
+  $('fKode').value=p?p.kode:nextKode(); $('fNama').value=p?p.nama:''; $('fHpp').value=p?p.hpp:'';
+  $('fSave').disabled=false; $('dProd').showModal(); $(p?'fHpp':'fNama').focus();
+}
+$('btnNewProd').onclick=function(){ openProd(null); };
+$('fProd').addEventListener('submit',async function(e){
+  if(!e.submitter||e.submitter.value!=='ok') return;
+  e.preventDefault();
+  var row={kode:$('fKode').value.trim(),nama:$('fNama').value.trim(),hpp:Math.max(0,Math.round(num($('fHpp').value)))};
+  $('fSave').disabled=true;
+  var r=ui.editId?await SB.from('pr_products').update(row).eq('id',ui.editId).select('id'):await SB.from('pr_products').insert(row).select('id');
+  $('fSave').disabled=false;
+  if(r.error){ alert(errMsg(r.error)); return; }
+  $('dProd').close(); toast(ui.editId?'Produk diperbarui':'Produk ditambahkan'); loadProducts();
+});
+$('pSearch').oninput=renderProducts;
+$('prodBody').addEventListener('click',async function(e){
+  var tr=e.target.closest('tr[data-id]'); if(!tr) return; var p=pmap[tr.dataset.id]; if(!p) return;
+  var b=e.target.closest('button[data-a]');
+  if(!b){ addItem(p.id,1); return; }
+  if(b.dataset.a==='edit') openProd(p);
+  else if(b.dataset.a==='del' && confirm('Hapus produk "'+p.nama+'" dari master?\nItem di proyek yang sudah ada tetap tersimpan.')){
+    var r=await SB.from('pr_products').delete().eq('id',p.id);
+    if(r.error) toast(errMsg(r.error),true); else { toast('Produk dihapus'); loadProducts(); }
+  }
+});
+
+/* ---------- export ---------- */
+function csvCell(v){ v=String(v==null?'':v); return /[,"\n;]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }
+function projectCsv(p,its){
+  var m=Number(p.margin)||0, sub=0; its.forEach(function(i){ sub+=i.hpp*i.qty; }); var mg=Math.round(sub*m/100);
+  var L=['Rekapitulasi Proyek: '+p.nama,'Margin: '+m+'%','','SKU,Nama Produk,Harga Satuan (HPP),Qty,Subtotal HPP'];
+  its.forEach(function(i){ L.push([csvCell(i.kode),'"'+String(i.nama).replace(/"/g,'""')+'"',i.hpp,i.qty,i.hpp*i.qty].join(',')); });
+  L.push('','Total Subtotal HPP,,,'+sub,'Margin ('+m+'%),,,'+mg,'Total Anggaran Penawaran,,,'+(sub+mg),'');
+  return L.join('\n');
+}
+$('btnExpProj').onclick=function(){
+  var c=cur(); if(!c) return;
+  if(!items.length){ toast('Proyek ini belum punya item'); return; }
+  download('Rekap_'+slug(c.nama)+'.csv','﻿'+projectCsv(c,items),'text/csv;charset=utf-8');
+};
+$('btnCsv').onclick=function(){
+  if(!products.length){ toast('Belum ada produk'); return; }
+  var L=['SKU,Nama Produk,Harga Satuan (HPP)'].concat(products.map(function(p){ return [csvCell(p.kode),'"'+p.nama.replace(/"/g,'""')+'"',p.hpp].join(','); }));
+  download('Master_Produk_'+isoDate()+'.csv','﻿'+L.join('\n'),'text/csv;charset=utf-8');
+};
+$('btnBackup').onclick=async function(){
+  try{
+    var its=await fetchAll(function(){ return SB.from('pr_items').select('project_id,kode,nama,hpp,qty').order('seq'); });
+    var data={app:'kayana-proyek-online',exported_at:new Date().toISOString(),
+      products:products.map(function(p){return {kode:p.kode,nama:p.nama,hpp:p.hpp};}),
+      projects:projects.map(function(p){ return {nama:p.nama,margin:p.margin,items:its.filter(function(i){return i.project_id===p.id;}).map(function(i){return {kode:i.kode,nama:i.nama,hpp:i.hpp,qty:i.qty};})}; })};
+    download('Backup_Kayana_Proyek_'+isoDate()+'.json',JSON.stringify(data,null,1),'application/json');
+    toast('Backup diunduh: '+data.products.length+' produk, '+data.projects.length+' proyek');
+  }catch(e){ toast(errMsg(e),true); }
+};
+
+/* ---------- import ---------- */
+function parseCsv(text){
+  text=text.replace(/^﻿/,'');
+  var lines=text.split(/\r?\n/), sep=',';
+  var hdr=lines.find(function(l){ return /(sku|kode|nama)/i.test(l); })||lines[0]||'';
+  if((hdr.match(/;/g)||[]).length>(hdr.match(/,/g)||[]).length) sep=';';
+  var rows=[],row=[],cell='',q=false;
+  for(var i=0;i<text.length;i++){ var c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){cell+='"';i++;} else q=false; } else cell+=c; }
+    else if(c==='"') q=true; else if(c===sep){ row.push(cell); cell=''; }
+    else if(c==='\n'||c==='\r'){ if(c==='\r'&&text[i+1]==='\n') i++; row.push(cell); rows.push(row); row=[]; cell=''; }
+    else cell+=c;
+  }
+  if(cell!==''||row.length){ row.push(cell); rows.push(row); }
+  return rows;
+}
+// baca CSV: rekap proyek (dari "Ekspor Proyek Ini", aplikasi lama/baru) atau daftar produk
+function readCsv(text){
+  var rows=parseCsv(text), name=null, margin=null, hi=-1;
+  rows.forEach(function(r,i){
+    var a=String(r[0]||'').trim();
+    var m1=a.match(/^Rekapitulasi Proyek\s*:\s*(.+)$/i); if(m1) name=m1[1].trim();
+    var m2=a.match(/^Margin\s*:\s*([\d.,]+)\s*%/i); if(m2) margin=Math.round(num(m2[1].replace(',','.')));
+    if(hi<0){ var h=r.map(function(c){return String(c).toLowerCase();}); if(h.some(function(c){return /nama|produk/.test(c);}) && h.some(function(c){return /harga|hpp/.test(c);})) hi=i; }
+  });
+  if(hi<0) throw new Error('Kolom "Nama Produk" & "Harga" tidak ditemukan di file');
+  var h=rows[hi].map(function(c){return String(c).toLowerCase().trim();});
+  var ik=h.findIndex(function(c){return /sku|kode/.test(c);}), inm=h.findIndex(function(c){return /nama|produk/.test(c);}),
+      ih=h.findIndex(function(c){return /harga|hpp/.test(c);}), iq=h.findIndex(function(c){return /^qty|jumlah/.test(c);});
+  var list=[];
+  for(var i=hi+1;i<rows.length;i++){
+    var r=rows[i]; if(!r||!r.some(function(c){return String(c).trim();})){ if(list.length) break; else continue; }
+    var nm=String(r[inm]||'').trim(); if(!nm||/^total|^margin/i.test(String(r[0]||'').trim())) continue;
+    list.push({kode:ik>-1?String(r[ik]||'').trim():'',nama:nm,hpp:Math.max(0,money(r[ih])),qty:iq>-1?Math.max(0,Math.floor(num(r[iq]))):0});
+  }
+  return {project:name?{nama:name,margin:margin==null?20:margin,items:list.filter(function(x){return x.qty>0;})}:null,products:list};
+}
+// cari data produk/proyek di file JSON (backup aplikasi baru atau aplikasi lama)
+function readJson(d){
+  var prods=[],projs=[];
+  function pick(o,keys){ for(var i=0;i<keys.length;i++) if(o[keys[i]]!=null&&o[keys[i]]!=='') return o[keys[i]]; return null; }
+  function asProd(o){ var n=pick(o,['nama','name','namaProduk','nama_produk','produk','product']); var h=pick(o,['hpp','harga','hargaSatuan','harga_satuan','price','modal']);
+    if(n==null||h==null||typeof n==='object') return null;
+    return {kode:String(pick(o,['kode','sku','SKU','code','id'])||'').trim(),nama:String(n).trim(),hpp:Math.max(0,money(h)),qty:Math.max(0,Math.floor(num(pick(o,['qty','jumlah','quantity'])||0)))}; }
+  function prodArray(v){ return Array.isArray(v)&&v.length>0&&v.every(function(o){return o&&typeof o==='object'&&!Array.isArray(o)&&asProd(o);}); }
+  function walk(x,depth){
+    if(depth>6||!x||typeof x!=='object') return;
+    if(Array.isArray(x)){ x.forEach(function(v){ walk(v,depth+1); }); return; }
+    var keys=Object.keys(x), itemKey=null;
+    keys.forEach(function(k){ if(!itemKey&&prodArray(x[k])&&/item|kebutuhan|barang|produk|product|list|detail/i.test(k)) itemKey=k; });
+    var pn=pick(x,['namaProyek','nama_proyek','projectName','nama','name','title']);
+    // objek proyek = punya nama (teks) + daftar barang, dan (key-nya item/kebutuhan atau ada margin)
+    if(itemKey&&typeof pn==='string'&&(/item|kebutuhan|barang|detail/i.test(itemKey)||pick(x,['margin','marginPersen'])!=null)){
+      projs.push({nama:pn.trim(),margin:Math.round(num(pick(x,['margin','marginPersen'])==null?20:pick(x,['margin','marginPersen']))),items:x[itemKey].map(asProd)});
+      return;
+    }
+    if(!itemKey){ var p=asProd(x); if(p){ prods.push(p); return; } }
+    keys.forEach(function(k){ walk(x[k],depth+1); });
+  }
+  walk(d,0);
+  return {products:prods,projects:projs};
+}
+async function upsertProducts(list){
+  var byKode={}; products.forEach(function(p){ byKode[p.kode.toLowerCase()]=p; });
+  var ins=[],seen={},added=0;
+  list.forEach(function(r){
+    if(!r.nama) return; var k=(r.kode||'').toLowerCase();
+    if(!k){ var ex=products.find(function(p){return p.nama.toLowerCase()===r.nama.toLowerCase();}); if(ex){ r.kode=ex.kode; return; } }
+    if(k&&byKode[k]) return; if(k&&seen[k]) return;
+    var kode=r.kode||null; if(!kode){ kode=nextKode(); products.push({kode:kode,nama:'',hpp:0}); }
+    seen[kode.toLowerCase()]=1; r.kode=kode; ins.push({kode:kode,nama:r.nama,hpp:r.hpp});
+  });
+  for(var i=0;i<ins.length;i+=500){ var a=await SB.from('pr_products').insert(ins.slice(i,i+500)); if(a.error) throw a.error; added+=ins.slice(i,i+500).length; }
+  await loadProducts();
+  return added;
+}
+async function importProject(pj){
+  var name=pj.nama, exists=projects.some(function(p){return p.nama.toLowerCase()===name.toLowerCase();});
+  if(exists) name=name+' (import '+isoDate()+')';
+  var r=await SB.from('pr_projects').insert({nama:name,margin:pj.margin}).select('id,nama,margin,updated_at');
+  if(r.error) throw r.error; var id=r.data[0].id;
+  var byKode={}; products.forEach(function(p){ byKode[p.kode.toLowerCase()]=p; });
+  var rows=pj.items.filter(function(i){return i.qty>0;}).map(function(i){ var p=byKode[(i.kode||'').toLowerCase()];
+    return {project_id:id,product_id:p?p.id:null,kode:i.kode||(p?p.kode:'-'),nama:i.nama,hpp:i.hpp,qty:i.qty}; });
+  if(rows.length){ var a=await SB.from('pr_items').insert(rows); if(a.error) throw a.error; }
+  return {id:id,nama:name,n:rows.length};
+}
+$('btnImport').onclick=function(){ $('fileImport').click(); };
+$('fileImport').addEventListener('change',function(){
+  var f=this.files[0]; this.value=''; if(!f) return;
+  var rd=new FileReader();
+  rd.onload=async function(){
+    try{
+      var txt=String(rd.result), res;
+      if(/\.json$/i.test(f.name)||/^\s*[\{\[]/.test(txt)) res=readJson(JSON.parse(txt));
+      else { var c=readCsv(txt); res={products:c.products,projects:c.project?[c.project]:[]}; }
+      var allProds=res.products.concat.apply(res.products,res.projects.map(function(p){return p.items;}));
+      if(!allProds.length&&!res.projects.length) throw new Error('Tidak ada produk/proyek yang terbaca dari file ini');
+      var msg='Import dari "'+f.name+'":\n• '+res.projects.length+' proyek'+(res.projects.length?' ('+res.projects.map(function(p){return p.nama+' – '+p.items.length+' item';}).join('; ')+')':'')+
+        '\n• produk baru ditambahkan ke Master (produk dengan SKU sama tidak diubah)\n\nLanjutkan?';
+      if(!confirm(msg)) return;
+      toast('Mengimpor…');
+      var added=await upsertProducts(allProds), last=null;
+      for(var i=0;i<res.projects.length;i++) last=await importProject(res.projects[i]);
+      await loadProjects();
+      if(last) switchProject(last.id); else loadItems();
+      toast('Import selesai: '+added+' produk baru'+(res.projects.length?', '+res.projects.length+' proyek':''));
+    }catch(e){ alert('Gagal import: '+errMsg(e)); }
+  };
+  rd.readAsText(f);
+});
+
+/* ---------- boot ---------- */
+async function boot(){
+  if(!window.supabase){ gate('Gagal memuat','Library gagal dimuat. Periksa koneksi internet.'); return; }
+  SB=window.supabase.createClient(APP_CONFIG.url,APP_CONFIG.key,{auth:{persistSession:false,autoRefreshToken:false}});
+  try{ await Promise.all([loadProducts(),loadProjects()]); await loadItems(); }
+  catch(e){ gate('Gagal memuat',errMsg(e)); return; }
+  subscribe();
+  $('gate').hidden=true; document.body.classList.remove('gated');
+}
+setTimeout(function(){ if(!$('gate').hidden&&$('btnRetry').hidden) gate('Gagal memuat','Server tidak merespons. Cek koneksi internet lalu tekan Coba Lagi.'); },10000);
+boot();
+})();
+</script>
+</body>
+</html>
